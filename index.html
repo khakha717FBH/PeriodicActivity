@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اكتشف قانون الترتيب</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+ :root{
+     --navy-deep:#131c30;
+     --navy:#1B2640;
+     --navy-card:#22315490;
+     --navy-card-solid:#233256;
+     --teal:#14c8a8;
+     --teal-glow:#14c8a855;
+     --coral:#ff6b4a;
+     --electron-blue:#7fd9e8;
+     --ink:#eaf2f2;
+     --ink-dim:#aab7cf;
+     --border:#33456f;
+     --danger:#ff6b6b;
+     --success:#3ddc97;
+     --radius:18px;
+ }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Cairo",sans-serif;
+}
+
+body{
+        background:
+            radial-gradient(ellipse 900px 500px at 15% -10%,#1f2f52 0%, transparent 60%),
+            radial-gradient(ellipse 700px 600px at 100% 20%, #17233e 0%, transparent 55%),
+            var(--navy-deep);
+        color:var(--ink);
+        min-height:100vh;
+        display:flex;
+        flex-direction: column; /* تم تعديل التوجيه ليتدفق المحتوى طبيعياً من الأعلى لأسفل */
+        align-items:center;
+        padding: 20px 25px 40px;
+        font-family:'Cairo',sans-serif;
+        line-height:1.6;
+}
+
+.container{
+    width:100%;
+    max-width:1050px;
+}
+
+h1{
+    text-align:center;
+    margin-bottom:10px;
+}
+
+.subtitle{
+    text-align:center;
+    opacity:.9;
+    margin-bottom:35px;
+}
+
+.slots{
+    display:grid;
+    grid-template-columns:repeat(8,1fr);
+    gap:12px;
+    margin-bottom:45px;
+    direction:ltr;
+}
+
+.slot{
+    height:105px;
+    border:3px dashed rgba(255,255,255,.12);
+    border-radius:14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:28px;
+    background:transparent;
+    color:var(--ink);
+}
+
+.slot.correct{
+    border-color:var(--success);
+    background:linear-gradient(180deg,var(--success)22,var(--success)11);
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+}
+
+.card{
+    background:var(--navy-card);
+    color:var(--ink);
+    border-radius:16px;
+    padding:18px;
+    text-align:center;
+    cursor:grab;
+    font-weight:700;
+    user-select:none;
+    transition:.2s;
+    border:1px solid var(--border);
+}
+
+.card:hover{
+    transform:scale(1.04);
+}
+
+.symbol{
+    font-size:34px;
+}
+
+.number{
+    color:var(--electron-blue);
+    margin-top:8px;
+}
+
+/* 🛠️ تعديل التنسيق الخاص بالـ Topbar لضبط المقاس والتوسط */
+.topbar{
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between;
+    gap: 12px; 
+    padding: 8px 16px; /* تقليل الهوامش الداخلية لجعله نحيفاً وأنيقاً */
+    width: 100%; 
+    max-width: 1050px; 
+    margin: 0 auto 35px; /* زيادة الهامش السفلي لإبعاد عنوان النشاط ومنع التداخل */
+    background: rgba(19, 28, 48, 0.9); /* زيادة عتامة الخلفية قليلاً لعزل الحروف الخلفية تماماً */
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+}
+.home-link{ 
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center;
+    gap: 8px; 
+    background: var(--navy-card-solid); 
+    border: 1.5px solid var(--teal); 
+    color: var(--teal); 
+    padding: 6px 16px; /* تعديل مساحة الزر الداخلية */
+    border-radius: 100px; 
+    font-weight: 700; 
+    font-size: 14px;
+    text-decoration: none; 
+    transition: 0.2s ease;
+}
+.home-link:hover{ background:var(--teal); color:var(--navy-deep); box-shadow:0 0 18px var(--teal-glow); }
+.brand{ color:var(--teal); font-weight:800; font-size: 15px; }
+
+.message{
+    margin-top:35px;
+    display:none;
+    background:var(--navy-card);
+    color:var(--ink);
+    border-radius:18px;
+    padding:28px;
+    text-align:center;
+    border:1px solid var(--border);
+}
+
+.message h2{
+    color:var(--success);
+    margin-bottom:15px;
+}
+
+.options{
+    margin-top:20px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    text-align:right;
+}
+
+button{
+    margin-top:22px;
+    padding:12px 22px;
+    border:none;
+    border-radius:10px;
+    background:var(--teal);
+    color:var(--navy-deep);
+    font-size:16px;
+    cursor:pointer;
+    font-weight:800;
+}
+
+button:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 20px var(--teal-glow);
+}
+
+.success{
+    color:var(--success);
+    font-size:20px;
+    margin-top:15px;
+    font-weight:800;
+}
+
+@media(max-width:800px){
+    .topbar {
+        flex-direction: column; /* ترتيب العناصر فوق بعضها في الشاشات الصغيرة لحماية المقاس */
+        text-align: center;
+        gap: 8px;
+        padding: 12px;
+    }
+    .slots{
+        grid-template-columns:repeat(4,1fr);
+    }
+    .cards{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="topbar">
+    <a class="home-link" href="https://sites.google.com/view/fouadedulab/student/grade9/firstterm/unit1/lesson2" target="_blank" rel="noopener">العودة إلى صفحة الدرس</a>
+    <div class="brand">مختبر فؤاد التعليمي · Fouad EduLab</div>
+</div>
+
+<h1>🔍 مهمة الباحث</h1>
+
+<p class="subtitle">
+رتب العناصر داخل المربعات حسب النمط الذي تراه مناسبًا.
+</p>
+
+<div class="slots" id="slots"></div>
+
+<div class="cards" id="cards"></div>
+
+<div class="message" id="question">
+
+<h2>🎉 أحسنت!</h2>
+
+<p>لقد نجحت في ترتيب العناصر.</p>
+
+<p style="margin-top:10px;">
+ما القاعدة التي استخدمتها؟
+</p>
+
+<div class="options">
+
+<label><input type="radio" name="q" value="1"> حسب اللون.</label>
+
+<label><input type="radio" name="q" value="2"> حسب الكتلة الذرية.</label>
+
+<label><input type="radio" name="q" value="3"> حسب العدد الذري.</label>
+
+<label><input type="radio" name="q" value="4"> حسب الحالة الفيزيائية.</label>
+
+</div>
+
+<button onclick="checkAnswer()">تحقق</button>
+
+<div class="success" id="result"></div>
+
+</div>
+
+</div>
+
+<script>
+
+const elements=[
+{symbol:"H",num:1},
+{symbol:"He",num:2},
+{symbol:"Li",num:3},
+{symbol:"Be",num:4},
+{symbol:"B",num:5},
+{symbol:"C",num:6},
+{symbol:"N",num:7},
+{symbol:"O",num:8}
+];
+
+const shuffled=[...elements].sort(()=>Math.random()-0.5);
+
+const slots=document.getElementById("slots");
+const cards=document.getElementById("cards");
+
+elements.forEach((e,i)=>{
+
+let slot=document.createElement("div");
+
+slot.className="slot";
+
+slot.dataset.correct=e.symbol;
+
+slot.addEventListener("dragover",ev=>ev.preventDefault());
+
+slot.addEventListener("drop",drop);
+
+slots.appendChild(slot);
+
+});
+
+shuffled.forEach(e=>{
+
+let card=document.createElement("div");
+
+card.className="card";
+
+card.draggable=true;
+
+card.id=e.symbol;
+
+card.innerHTML=
+`
+<div class="symbol">${e.symbol}</div>
+<div class="number">${e.num}</div>
+`;
+
+card.addEventListener("dragstart",drag);
+
+cards.appendChild(card);
+
+});
+
+function drag(ev){
+
+ev.dataTransfer.setData("text/plain", ev.currentTarget.id);
+
+}
+
+function drop(ev){
+
+ev.preventDefault();
+
+const id = ev.dataTransfer.getData("text/plain");
+const card = document.getElementById(id);
+if(!card) return;
+
+const slot = ev.target.classList.contains('slot') ? ev.target : ev.target.closest('.slot');
+if(!slot) return;
+
+if(slot.dataset.correct === id){
+    slot.innerHTML = card.innerHTML;
+    slot.classList.add('correct');
+    card.remove();
+    checkFinish();
+}
+
+}
+
+function checkFinish(){
+
+if(document.querySelectorAll(".card").length===0){
+
+document.getElementById("question").style.display="block";
+
+window.scrollTo({
+top:document.body.scrollHeight,
+behavior:"smooth"
+});
+
+}
+
+}
+
+function checkAnswer(){
+
+let ans=document.querySelector("input[name=q]:checked");
+
+if(!ans)return;
+
+if(ans.value==="3"){
+
+document.getElementById("result").innerHTML=
+"✅ صحيح! لقد اكتشفت أن عناصر الجدول الدوري تُرتب تصاعدياً حسب العدد الذري.";
+
+}else{
+
+document.getElementById("result").innerHTML=
+"❌ حاول مرة أخرى وفكر في الأرقام الموجودة على البطاقات.";
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
